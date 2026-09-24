@@ -59,8 +59,16 @@ router.delete("/:id", async (req, res) => {
 //Get all products
 router.get("/", async (req, res) => {
   try {
-    const { category, minPrice, maxPrice, sortBy, pageAndLimit } = req.query;
+    const {
+      category,
+      minPrice,
+      maxPrice,
+      sortBy,
+      page = 1,
+      limit = 10,
+    } = req.query;
     const filter = {};
+    const sort = {};
     if (category) {
       filter.category = category;
     }
@@ -68,7 +76,19 @@ router.get("/", async (req, res) => {
     if (minPrice) {
       filter.price = { $gte: Number(minPrice) };
     }
-    const getAllProducts = await Product.find(req.params.id);
+
+    if (maxPrice) {
+      filter.price = { $lte: Number(maxPrice) };
+    }
+
+    if (sortBy) {
+      if (sortBy === "price_asc") {
+        sort.price = 1;
+      } else if (sortBy === "price_desc") {
+        sort.price = -1;
+      }
+    }
+    const getAllProducts = await Product.find();
     res.json(getAllProducts);
   } catch (error) {
     res.status(500).json({ message: "Failed to get all products" });
