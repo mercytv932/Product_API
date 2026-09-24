@@ -69,7 +69,9 @@ router.get("/", async (req, res) => {
     } = req.query;
     const filter = {};
     const sort = {};
-    const skip = (page - 1) * limit;
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 10;
+    const skip = (pageNum - 1) * limitNum;
     if (category) {
       filter.category = category;
     }
@@ -79,7 +81,7 @@ router.get("/", async (req, res) => {
     }
 
     if (maxPrice) {
-      filter.price = { $lte: Number(maxPrice) };
+      filter.price = { ...filter.price, $lte: Number(maxPrice) };
     }
 
     if (sortBy) {
@@ -92,7 +94,7 @@ router.get("/", async (req, res) => {
     const getAllProducts = await Product.find(filter)
       .sort(sort)
       .skip(skip)
-      .limit(limit);
+      .limit(limitNum);
     res.json(getAllProducts);
   } catch (error) {
     res.status(500).json({ message: "Failed to get all products" });
