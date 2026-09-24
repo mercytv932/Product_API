@@ -69,6 +69,7 @@ router.get("/", async (req, res) => {
     } = req.query;
     const filter = {};
     const sort = {};
+    const skip = (page - 1) * limit;
     if (category) {
       filter.category = category;
     }
@@ -88,9 +89,14 @@ router.get("/", async (req, res) => {
         sort.price = -1;
       }
     }
-    const getAllProducts = await Product.find();
+    const getAllProducts = await Product.find(filter)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
     res.json(getAllProducts);
   } catch (error) {
     res.status(500).json({ message: "Failed to get all products" });
   }
 });
+
+module.exports = router;
