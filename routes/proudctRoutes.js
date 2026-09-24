@@ -55,3 +55,22 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to delete product" });
   }
 });
+
+//Get all products
+router.get("/", async (req, res) => {
+  try {
+    const { category, minPrice, maxPrice, sortBy, pageAndLimit } = req.query;
+    const filter = {};
+    if (category) {
+      filter.category = category;
+    }
+
+    if (minPrice) {
+      filter.price = { $gte: Number(minPrice) };
+    }
+    const getAllProducts = await Product.find(req.params.id);
+    res.json(getAllProducts);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get all products" });
+  }
+});
