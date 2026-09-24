@@ -6,10 +6,11 @@ router.post("/", async (req, res) => {
   try {
     const newProduct = new Product(req.body);
     const savedProduct = await newProduct.save();
-    return res
-      .status(201)
-      .json({ message: "The Product was successfully created 🟢" });
+    res.status(201).json({
+      message: "The Product was successfully created 🟢",
+      Product: savedProduct,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Failed to create the product 🔴" });
+    res.status(400).json({ message: "Failed to create the product 🔴" });
   }
 });
